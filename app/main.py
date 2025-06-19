@@ -17,3 +17,6 @@ async def upload_transcript(file: UploadFile = File(...)):
 @app.get("/")
 def read_root():
     return {"message": "✅ FastAPI is running on Render!"}
+git add app/main.py
+git commit -m "Add root route for Render health check"
+git push origin main
