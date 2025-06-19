@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from app.ocr_utils import parse_transcript
@@ -14,3 +13,7 @@ async def upload_transcript(file: UploadFile = File(...)):
     transcript_data = await parse_transcript(file)
     results = evaluate_transcript(transcript_data)
     return JSONResponse(content=results)
+
+@app.get("/")
+def read_root():
+    return {"message": "✅ FastAPI is running on Render!"}
