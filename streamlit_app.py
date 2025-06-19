@@ -1,0 +1,35 @@
+
+import streamlit as st
+import pandas as pd
+import requests
+
+st.set_page_config(page_title="TSU Transfer Evaluation Tool", layout="wide")
+st.title("📄 TSU Transfer Evaluation Tool")
+st.markdown("Upload a redacted transcript or batch CSV to evaluate top degree matches and course applicability.")
+
+uploaded_file = st.file_uploader("Upload Transcript (PDF, PNG, JPG) or CSV", type=["pdf", "png", "jpg", "jpeg", "csv"])
+
+if uploaded_file:
+    if uploaded_file.type == "text/csv":
+        df = pd.read_csv(uploaded_file)
+        st.subheader("📊 Uploaded Batch Records")
+        st.dataframe(df.head())
+        st.info("Batch evaluation feature coming soon.")
+    else:
+        st.subheader("📄 Single Transcript Upload")
+        if st.button("Submit Transcript for Evaluation"):
+            response = requests.post(
+                "https://tiger-transfer-tool-demo.onrender.com/upload",
+                files={"file": uploaded_file}
+            )
+            if response.status_code == 200:
+                result = response.json()
+                st.success("Transcript successfully evaluated.")
+                st.write(f"**Student Name**: {result['student_name']}")
+                st.write(f"**Total Credits**: {result['total_credits']}")
+                st.write(f"**GPA**: {result['gpa']}")
+                st.subheader("🏆 Top Degree Matches")
+                df_results = pd.DataFrame(result["top_matches"])
+                st.dataframe(df_results)
+            else:
+                st.error("Error processing the transcript.")
